@@ -11,7 +11,7 @@ class ImageStreamer:
 
         self.command = ['ffmpeg',
             '-re',
-            '-s', sizeStr,
+            '-s', self.sizeStr,
             '-r', str(self.fps),  # rtsp fps (from input server)
             '-i', '-',
             

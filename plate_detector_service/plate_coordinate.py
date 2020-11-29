@@ -12,10 +12,10 @@ class PlateCoordinate:
         return self.min_x
     
     def getWidth(self):
-        return self.min_x + self.max_x
+        return self.max_x
     
     def getMinY(self):
         return self.min_y
     
     def getHeight(self):
-        return self.min_y + self.max_y
+        return self.max_y

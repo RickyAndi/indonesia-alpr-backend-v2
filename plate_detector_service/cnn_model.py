@@ -1,5 +1,6 @@
-
 import cv2
+import numpy as np
+
 from plate_coordinate import PlateCoordinate
 
 class CNNModel:
@@ -9,6 +10,7 @@ class CNNModel:
     def predict_plate_number(self, imageClass):
         
         image = imageClass.getImage()
+        (H, W) = image.shape[:2]
 
         blob = cv2.dnn.blobFromImage(
             image, 
@@ -21,6 +23,9 @@ class CNNModel:
 
         self.net.setInput(blob)
         
+        ln = self.net.getLayerNames()
+        ln = [ln[i[0] - 1] for i in self.net.getUnconnectedOutLayers()]
+
         layerOutputs = self.net.forward(ln)
 
         boxes = []
@@ -54,11 +59,11 @@ class CNNModel:
                 w = boxes[i][2]
                 h = boxes[i][3]
 
-                image.addPlateCoordinate(PlateCoordinate(x, w, y, h))
+                imageClass.addPlateCoordinate(PlateCoordinate(x, w, y, h))
 
-        for plate_coordinate in image.getPlateCoordinate():
-            cv2.rectangle(image, (plate_coordinate.getX(), plate_coordinate.getY(), plate_coordinate.getMaxX(), plate_coordinate.getMaxY(), (0. 255, 0), 5)
-        )
+        for plate_coordinate in imageClass.getPlateCoordinates():
+            cv2.rectangle(image, (plate_coordinate.getMinX(), plate_coordinate.getMinY(), plate_coordinate.getWidth(), plate_coordinate.getHeight()), (0, 255, 0), 2)
+        
 
         imageClass.setImageWithBoundingBoxes(image)
 

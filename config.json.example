@@ -1,45 +1,63 @@
 {
     "rabbitmq": {
-        "host": "localhost",
+        "host": "192.168.43.121",
         "port": 5672,
         "exchange": "plate_number_recognition_system",
         "exchange_type": "topic"
     },
     "mysql": {
-        "host": "localhost",
-        "username": "root",
+        "host": "192.168.43.121",
+        "username": "budi",
         "password": "password",
         "database": "plate_detector"
     },
     "redis": {
-        "host": "localhost",
-        "port": 6379
+        "host": "192.168.43.121",
+        "port": 6379,
+        "password": "password"
     },
     "plate_detector_service": {
+        "source_type": "video",
+        "video_path": "/home/rickyandhi/Videos/videos/mmmm/DSC_0036.MOV",
         "rtsp": {
             "source": "rtsp://localhost:9001/mystream",
-            "destination": "rtsp://localhost:9003/mystream"
+            "destination": "rtsp://localhost:8554/mystream"
+        },
+        "yolo": {
+            "model_path": "/home/rickyandhi/Documents/github/dakrnetab/cfg/yolov3-tiny.cfg",
+            "weight_path": "/home/rickyandhi/Documents/github/dakrnetab/backup/yolov3-tiny-weights-plate-detector-v2/yolov3-tiny_final.weights",
+            "class_path": ""
         },
         "routing_key": {
             "root": "plate_detector_service",
+            "detected_plate": "plate_detector_service.detected_plate"
+        },
+        "queue_key": {
             "detected_plate": "plate_detector_service.detected_plate"
         }
     },
     "plate_number_character_detector_service": {
         "knn": {
             "train": {
-                "data": "",
-                "labels": ""
+                "data": "/home/rickyandhi/Documents/github/ALPR-Indonesia/flattened_images.txt",
+                "labels": "/home/rickyandhi/Documents/github/ALPR-Indonesia/classifications.txt"
             }
         },
         "routing_key": {
+            "detected_plate_number": "plate_number_character_detector_service.detected_plate_number"
+        },
+        "cache_key": {
             "detected_plate_number": "plate_number_character_detector_service.detected_plate_number"
         }
     },
     "plate_number_service": {
         "routing_key": {
             "root": "plate_number_service",
-            "detected_stolen_plate": "plate_number_service.detected.stolen"
+            "detected_stolen_plate": "plate_number_service.detected.stolen",
+            "checked_plate": "plate_number_service.checked_plate"
+        },
+        "cache_key": {
+            "has_checked_plate": "plate_number_service.has_checked_plate"
         },
         "rest_server": {
             "port": 5001
